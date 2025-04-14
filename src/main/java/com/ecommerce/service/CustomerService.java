@@ -17,13 +17,13 @@ public class CustomerService {
     // Create
     @Transactional
     public Customer createCustomer(Customer customer){
-        if(customer.getName() == null || customer.getName().isEmpty()){
+        if(customer.getName() == null || customer.getName().trim().isEmpty()){
             throw new IllegalArgumentException("Name can NOT be empty.");
         }
-        if (customer.getEmail() == null || customer.getEmail().isEmpty()){
+        if (customer.getEmail() == null || customer.getEmail().trim().isEmpty()){
             throw new IllegalArgumentException("Email can NOT be empty.");
         }
-        if (customer.getPhone() == null || customer.getPhone().isEmpty()){
+        if (customer.getPhone() == null || customer.getPhone().trim().isEmpty()){
             throw new IllegalArgumentException("Phone can NOT be empty.");
         }
 

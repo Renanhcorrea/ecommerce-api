@@ -18,19 +18,19 @@ public class EmployeeService {
     // Create
     @Transactional
     public Employee createEmployee(Employee employee){
-        if(employee.getName() == null || employee.getName().isEmpty()){
+        if(employee.getName() == null || employee.getName().trim().isEmpty()){
             throw new IllegalArgumentException("Name must NOT be empty.");
         }
-        if(employee.getLogin() == null || employee.getLogin().isEmpty()){
+        if(employee.getLogin() == null || employee.getLogin().trim().isEmpty()){
             throw new IllegalArgumentException("Login must NOT be empty.");
         }
-        if(employee.getPassword() == null || employee.getPassword().isEmpty()){
+        if(employee.getPassword() == null || employee.getPassword().trim().isEmpty()){
             throw new IllegalArgumentException("Password must NOT be empty.");
         }
         /*if(employee.getEmail()==null || employee.getEmail().isEmpty()){
             throw new IllegalArgumentException("Email must NOT be empty.");
         }*/
-        if(employee.getRole()==null || employee.getRole().isEmpty()){
+        if(employee.getRole()==null || employee.getRole().trim().isEmpty()){
             throw new IllegalArgumentException("Role must NOT be empty.");
         }
 
