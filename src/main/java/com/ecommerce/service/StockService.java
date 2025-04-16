@@ -31,13 +31,13 @@ public class StockService {
     // Find by ID
     public Stock getStockById(Long id){
         return stockRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Stock not found with ID: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Stock not found with ID: " + id));
     }
 
     // Find by Product
     public Stock getStockByProduct(Product product){
         return stockRepository.findByProduct(product)
-                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + product.getId()));
+                .orElseThrow(() -> new NoSuchElementException("Product not found with ID: " + product.getId()));
     }
 
     // Find All

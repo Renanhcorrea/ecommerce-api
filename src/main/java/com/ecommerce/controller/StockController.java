@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -23,13 +24,21 @@ public class StockController {
 
     @PostMapping
     public ResponseEntity<Stock> createStock(@RequestBody Stock stock){
-        return new ResponseEntity<>(stockService.createStock(stock),
-                HttpStatus.CREATED);
+        try {
+            Stock createdStock = stockService.createStock(stock);
+            return new ResponseEntity<>(createdStock, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Stock> getStockById(@PathVariable Long id) {
-        return ResponseEntity.ok(stockService.getStockById(id));
+        try {
+            return ResponseEntity.ok(stockService.getStockById(id));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/product/{productId}")
@@ -43,6 +52,42 @@ public class StockController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<List<Stock>> getAllStock(){
+        return ResponseEntity.ok(stockService.getAllStock());
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Stock> updateStock(@PathVariable Long id,@RequestBody Stock stock){
+        try {
+            return ResponseEntity.ok(stockService.updateStock(id, stock));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException  e){
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
+    @PutMapping("/product/{productId}/quantity")
+    public ResponseEntity<Stock> updateStockQuantity(@PathVariable Long productId, @RequestParam Long change){
+        try {
+            Product product = productService.getProductById(productId);
+            Stock updateStock = stockService.updateStockQuantity(product, change);
+            return ResponseEntity.ok(updateStock);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStockById(@PathVariable Long id) {
+        try {
+            stockService.deleteStockById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

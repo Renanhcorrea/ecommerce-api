@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -15,14 +17,18 @@ public class ProductService {
     private ProductRepository productRepository;
 
     // Create
+    @Transactional
     public Product createProduct(Product product){
         validateProduct(product);
 
         if(product.getId() == null){
             int groupType = product.getGroupType();
-            long maxID = productRepository.findMaxIdByGroupType(groupType);
+            Long maxID = productRepository.findMaxIdByGroupType(groupType);
             long base = groupType * 1000L;
-            long newId = (maxID > base) ? maxID +1 : base +1;
+            long newId = base +1;
+            if (maxID != null && maxID > base){
+                newId = maxID +1;
+            }
             product.setId(newId);
         }
         return productRepository.save(product);
@@ -47,7 +53,7 @@ public class ProductService {
     // Find by ID
     public Product getProductById(Long id){
         return productRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Product not found with ID: " + id));
+                .orElseThrow(()-> new NoSuchElementException("Product not found with ID: " + id));
     }
 
     // Find All
@@ -90,6 +96,10 @@ public class ProductService {
     // Update
     @Transactional
     public Product updateProduct(Long id, Product updatedProduct){
+        Optional<Product> existingProductOptional = productRepository.findById(id);
+        if (existingProductOptional.isEmpty()){
+            throw new NoSuchElementException("Product not found with ID: "+ id);
+        }
         Product productExisting = getProductById(id);
         updatedProduct.setId(productExisting.getId());
         return productRepository.save(updatedProduct);
@@ -99,7 +109,7 @@ public class ProductService {
     @Transactional
     public void deleteProductById(Long id){
         if(!productRepository.existsById(id)){
-            throw new RuntimeException("Product not found with ID: "+ id);
+            throw new NoSuchElementException("Product not found with ID: "+ id);
         }
         productRepository.deleteById(id);
     }

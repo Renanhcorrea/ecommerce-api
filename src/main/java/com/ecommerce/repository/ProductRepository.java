@@ -3,6 +3,7 @@ package com.ecommerce.repository;
 import com.ecommerce.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByUnitIgnoreCaseContaining(String unit);
     List<Product> findByTypeIgnoreCaseContaining(String type);
     @Query("SELECT MAX(p.id) FROM Product p WHERE p.groupType = :groupType")
-    long findMaxIdByGroupType(Integer groupType);
+    Long findMaxIdByGroupType(@Param("groupType") Integer groupType);
 }

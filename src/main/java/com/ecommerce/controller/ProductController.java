@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/product")
@@ -28,6 +29,33 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
+    @GetMapping
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String unit,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) Integer groupType
+    ){
+        try {
+            if (name != null){
+                return ResponseEntity.ok(productService.getProductByName(name));
+            } else if (unit != null) {
+                return ResponseEntity.ok(productService.getProductByUnit(unit));
+            } else if (type != null) {
+                return ResponseEntity.ok(productService.getProductByType(type));
+            } else if (groupType != null) {
+                return ResponseEntity.ok(productService.getProductByGroupType(groupType));
+            } else {
+                return ResponseEntity.ok(productService.getAllProduct());
+            }
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+    /*
     @GetMapping
     public ResponseEntity<List<Product>> getAllProduct(){
         return ResponseEntity.ok(productService.getAllProduct());
@@ -52,16 +80,27 @@ public class ProductController {
     public ResponseEntity<List<Product>> getProductByGroupType(@PathVariable Integer grouptype){
         return ResponseEntity.ok(productService.getProductByGroupType(grouptype));
     }
+     */
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @PathVariable Product updatedProduct){
-        return ResponseEntity.ok(productService.updateProduct(id, updatedProduct));
+        try {
+            return ResponseEntity.ok(productService.updateProduct(id, updatedProduct));
+        } catch (NoSuchElementException e){
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e ){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProductById(@PathVariable Long id){
-        productService.deleteProductById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            productService.deleteProductById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (NoSuchElementException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 }
 

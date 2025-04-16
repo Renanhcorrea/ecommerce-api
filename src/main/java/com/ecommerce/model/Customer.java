@@ -1,5 +1,6 @@
 package com.ecommerce.model;
 
+import com.ecommerce.model.identifier.TaxIdentifier;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,16 +25,21 @@ public class Customer {
     @Column(nullable = false)
     private String phone;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "tax_identifier_id")
+    private TaxIdentifier taxIdentifier;
+
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdDate;
 
     public Customer() {
     }
 
-    public Customer(String name, String email, String address, String phone) {
+    public Customer(String name, String email, String address, String phone, TaxIdentifier taxIdentifier) {
         this.name = name;
         this.email = email;
         this.address = address;
         this.phone = phone;
+        this.taxIdentifier = taxIdentifier;
     }
 }

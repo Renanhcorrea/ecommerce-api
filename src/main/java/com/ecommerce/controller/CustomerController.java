@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/customer")
@@ -17,13 +18,17 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer (@RequestBody Customer customer){
-        return new ResponseEntity<>(customerService.createCustomer(customer), HttpStatus.CREATED);
+    public ResponseEntity<Customer> createCustomer (@RequestBody Customer customer, @RequestParam String taxIndentifier){
+        return new ResponseEntity<>(customerService.createCustomer(customer, taxIndentifier), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long id){
-        return ResponseEntity.ok(customerService.getCustomerById(id));
+        try {
+            return ResponseEntity.ok(customerService.getCustomerById(id));
+        } catch (NoSuchElementException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
@@ -32,18 +37,26 @@ public class CustomerController {
     }
 
     @GetMapping("/{email}")
-    public ResponseEntity<Customer> getCustomerByEmail(String email){
+    public ResponseEntity<Customer> getCustomerByEmail(@PathVariable String email){
         return ResponseEntity.ok(customerService.getCustomerByEmail(email));
     }
 
     @PutMapping
-    public ResponseEntity<Customer> updateCustomer(@RequestBody Long id, Customer customer){
-        return ResponseEntity.ok(customerService.updateCustomer(id, customer));
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id,@RequestBody Customer customer){
+        try {
+            return ResponseEntity.ok(customerService.updateCustomer(id, customer));
+        } catch (NoSuchElementException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomerById(@PathVariable Long id){
-        customerService.deleteCustomerById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            customerService.deleteCustomerById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (NoSuchElementException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 }
