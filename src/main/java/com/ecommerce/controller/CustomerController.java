@@ -42,11 +42,13 @@ public class CustomerController {
     }
 
     @PutMapping
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id,@RequestBody Customer customer){
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id,@RequestBody Customer customer,@RequestParam(required = false) String newTaxIdentifier){
         try {
-            return ResponseEntity.ok(customerService.updateCustomer(id, customer));
+            return ResponseEntity.ok(customerService.updateCustomer(id, customer, newTaxIdentifier));
         } catch (NoSuchElementException e){
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(null);
         }
     }
 

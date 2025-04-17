@@ -32,6 +32,9 @@ public class Customer {
     @Column(name="created_at", updatable = false)
     private LocalDateTime createdDate;
 
+    @Transient
+    private String taxIdentifierValue;
+
     public Customer() {
     }
 

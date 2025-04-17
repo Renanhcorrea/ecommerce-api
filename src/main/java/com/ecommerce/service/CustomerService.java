@@ -85,12 +85,37 @@ public class CustomerService {
 
     // Update
     @Transactional
-    public Customer updateCustomer(Long id, Customer customer){
+    public Customer updateCustomer(Long id, Customer customer, String newTaxIdentifier){
+        Customer existingCustomer = customerRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Customer not found with ID " + id));
+
+        existingCustomer.setName(customer.getName());
+        existingCustomer.setEmail(customer.getEmail());
+        existingCustomer.setAddress(customer.getAddress());
+        existingCustomer.setPhone(customer.getPhone());
+
+        if (newTaxIdentifier != null && !newTaxIdentifier.trim().isEmpty()){
+            String onlyDigits = newTaxIdentifier.replaceAll("[^\\d]", "");
+            TaxIdentifier identifier = null;
+            if (onlyDigits.length() == 11 && cpfValidation.isValidCPF(onlyDigits)){
+                CPF cpf = new CPF(onlyDigits);
+                identifier = cpfRepository.save(cpf);
+            } else if (onlyDigits.length() == 14 && cnpjValidation.isValidCNPJ(onlyDigits)){
+                CNPJ cnpj = new CNPJ(onlyDigits);
+                identifier = cnpjRepository.save(cnpj);
+            } else {
+                throw new IllegalArgumentException("Invalid numbers");
+            }
+            existingCustomer.setTaxIdentifier(identifier);
+        }
+        return customerRepository.save(existingCustomer);
+        /*
         if(!customerRepository.existsById(id)){
             throw new NoSuchElementException("Customer not found with ID " + id);
         }
         customer.setId(id);
         return customerRepository.save(customer);
+         */
     }
 
     // Delete
