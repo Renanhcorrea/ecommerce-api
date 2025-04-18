@@ -1,13 +1,13 @@
 package com.ecommerce.service;
 
-import com.ecommerce.model.Customer;
-import com.ecommerce.model.identifier.CNPJ;
-import com.ecommerce.model.identifier.CPF;
-import com.ecommerce.model.validation.CNPJValidation;
-import com.ecommerce.model.validation.CPFValidation;
+import com.ecommerce.entity.Customer;
+import com.ecommerce.entity.identifier.CNPJ;
+import com.ecommerce.entity.identifier.CPF;
+import com.ecommerce.validation.CNPJValidation;
+import com.ecommerce.validation.CPFValidation;
 import com.ecommerce.repository.identifier.CNPJRepository;
 import com.ecommerce.repository.identifier.CPFRepository;
-import com.ecommerce.model.identifier.TaxIdentifier;
+import com.ecommerce.entity.identifier.TaxIdentifier;
 import com.ecommerce.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,8 +50,8 @@ public class CustomerService {
             throw new IllegalArgumentException("Must not be empty.");
         }
 
-        TaxIdentifier identifier = null;
-        String onlyDigits = taxIndentifier.replaceAll("[\\d]", "");
+        TaxIdentifier identifier;
+        String onlyDigits = taxIndentifier.replaceAll("\\d", "");
 
         if (onlyDigits.length() == 11 && cpfValidation.isValidCPF(onlyDigits)){
             CPF cpf = new CPF(onlyDigits);
@@ -95,8 +95,8 @@ public class CustomerService {
         existingCustomer.setPhone(customer.getPhone());
 
         if (newTaxIdentifier != null && !newTaxIdentifier.trim().isEmpty()){
-            String onlyDigits = newTaxIdentifier.replaceAll("[^\\d]", "");
-            TaxIdentifier identifier = null;
+            String onlyDigits = newTaxIdentifier.replaceAll("\\d", "");
+            TaxIdentifier identifier;
             if (onlyDigits.length() == 11 && cpfValidation.isValidCPF(onlyDigits)){
                 CPF cpf = new CPF(onlyDigits);
                 identifier = cpfRepository.save(cpf);
@@ -109,13 +109,6 @@ public class CustomerService {
             existingCustomer.setTaxIdentifier(identifier);
         }
         return customerRepository.save(existingCustomer);
-        /*
-        if(!customerRepository.existsById(id)){
-            throw new NoSuchElementException("Customer not found with ID " + id);
-        }
-        customer.setId(id);
-        return customerRepository.save(customer);
-         */
     }
 
     // Delete

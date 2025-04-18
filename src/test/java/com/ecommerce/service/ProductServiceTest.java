@@ -1,6 +1,6 @@
 package com.ecommerce.service;
 
-import com.ecommerce.model.Product;
+import com.ecommerce.entity.Product;
 import com.ecommerce.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

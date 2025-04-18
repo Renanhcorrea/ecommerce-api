@@ -1,4 +1,4 @@
-package com.ecommerce.model.validation;
+package com.ecommerce.validation;
 
 import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.InvalidStateException;

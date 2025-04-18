@@ -1,6 +1,6 @@
 package com.ecommerce.repository.identifier;
 
-import com.ecommerce.model.identifier.CPF;
+import com.ecommerce.entity.identifier.CPF;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.ecommerce.repository.identifier;
 
-import com.ecommerce.model.identifier.CNPJ;
+import com.ecommerce.entity.identifier.CNPJ;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

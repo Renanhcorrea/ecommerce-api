@@ -1,4 +1,4 @@
-package com.ecommerce.model.identifier;
+package com.ecommerce.entity.identifier;
 
 import jakarta.persistence.Entity;
 import lombok.Data;
@@ -7,14 +7,13 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CPF extends TaxIdentifier{
+public class CNPJ extends TaxIdentifier{
 
-    public CPF() {
+    public CNPJ() {
         super();
     }
 
-    public CPF(String identifier){
+    public CNPJ(String identifier) {
         super(identifier);
     }
-
 }

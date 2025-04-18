@@ -1,7 +1,9 @@
 package com.ecommerce.controller;
 
-import com.ecommerce.model.Customer;
+import com.ecommerce.dto.customer.CustomerRequestDTO;
+import com.ecommerce.entity.Customer;
 import com.ecommerce.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +16,29 @@ import java.util.NoSuchElementException;
 @RequestMapping("/customer")
 public class CustomerController {
 
+    private final CustomerService customerService;
+
     @Autowired
-    private CustomerService customerService;
-
-    @PostMapping
-    public ResponseEntity<Customer> createCustomer (@RequestBody Customer customer, @RequestParam String taxIndentifier){
-        return new ResponseEntity<>(customerService.createCustomer(customer, taxIndentifier), HttpStatus.CREATED);
+    public CustomerController(CustomerService customerService){
+        this.customerService = customerService;
     }
+/* PRECISO ARRUMAR !
+    @PostMapping
+    public ResponseEntity<CustomerRequestDTO> createCustomer (@Valid @RequestBody CustomerRequestDTO customerRequestDTO){
+        Customer customer = new Customer();
+        customer.setName(customerRequestDTO.getName());
+        customer.setEmail(customerRequestDTO.getEmail());
+        customer.setAddress(customerRequestDTO.getAddress());
+        customer.setPhone(customerRequestDTO.getPhone());
 
+        Customer createdCustomer = customerService.createCustomer(
+                customer,
+                customerRequestDTO.getTaxIdentifier(),
+                customerRequestDTO.getCep()
+        );
+        return new ResponseEntity<>(mapToCustomerResponseDTO(createdCustomer), HttpStatus.CREATED);
+    }
+ */
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long id){
         try {
@@ -38,7 +55,11 @@ public class CustomerController {
 
     @GetMapping("/{email}")
     public ResponseEntity<Customer> getCustomerByEmail(@PathVariable String email){
-        return ResponseEntity.ok(customerService.getCustomerByEmail(email));
+        try {
+            return ResponseEntity.ok(customerService.getCustomerByEmail(email));
+        } catch (NoSuchElementException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping

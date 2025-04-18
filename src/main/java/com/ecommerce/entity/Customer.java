@@ -1,6 +1,6 @@
-package com.ecommerce.model;
+package com.ecommerce.entity;
 
-import com.ecommerce.model.identifier.TaxIdentifier;
+import com.ecommerce.entity.identifier.TaxIdentifier;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,7 +20,8 @@ public class Customer {
     @Column(nullable = false)
     private String email;
 
-    private String address;
+    @Embedded
+    private Address address;
 
     @Column(nullable = false)
     private String phone;
@@ -35,14 +36,4 @@ public class Customer {
     @Transient
     private String taxIdentifierValue;
 
-    public Customer() {
-    }
-
-    public Customer(String name, String email, String address, String phone, TaxIdentifier taxIdentifier) {
-        this.name = name;
-        this.email = email;
-        this.address = address;
-        this.phone = phone;
-        this.taxIdentifier = taxIdentifier;
-    }
 }
